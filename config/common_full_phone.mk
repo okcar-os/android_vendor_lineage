@@ -14,3 +14,5 @@ PRODUCT_PRODUCT_PROPERTIES += \
     ro.support_one_handed_mode?=true
 
 $(call inherit-product, vendor/lineage/config/telephony.mk)
+
+$(call inherit-product, $(TOP)/okcar/okcar.mk)
