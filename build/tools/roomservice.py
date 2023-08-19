@@ -55,6 +55,23 @@ except:
 if not depsonly:
     print("Device %s not found. Attempting to retrieve device repository from LineageOS Github (http://github.com/LineageOS)." % device)
 
+okcaros_repos = []
+okcaros_revision = ""
+try:
+    okcarosreq = urllib.request.Request("https://u.okcaros.com/api/opensource/repo")
+    response = urllib.request.urlopen(okcarosreq)
+    if response.status == 200:
+        data = json.loads(response.read().decode())
+        okcaros_repos = data['repos']
+        okcaros_revision = data['revision']
+        #print("okcaros_repos:", okcaros_repos)
+        #print("branch:", branch)
+    else:
+        raise Exception("status code: %s" % response.status)
+except Exception as e:
+    print("okcar-os repo fetch error", e)
+    sys.exit()
+
 repositories = []
 
 try:
@@ -191,15 +208,22 @@ def add_to_manifest(repositories):
         repo_target = repository['target_path']
         repo_revision = repository['branch']
         print('Checking if %s is fetched from %s' % (repo_target, repo_name))
+
+        if repo_name in okcaros_repos:
+            repo_name_prefix = "okcar-os"
+            repo_revision = okcaros_revision
+        else:
+            repo_name_prefix = "LineageOS"
+            
         if is_in_manifest(repo_target):
-            print('LineageOS/%s already fetched to %s' % (repo_name, repo_target))
+            print('%s/%s already fetched to %s' % (repo_name_prefix, repo_name, repo_target))
             continue
 
-        print('Adding dependency: LineageOS/%s -> %s' % (repo_name, repo_target))
+        print('Adding dependency: %s/%s -> %s' % (repo_name_prefix, repo_name, repo_target))
         project = ElementTree.Element("project", attrib = {
             "path": repo_target,
             "remote": "github",
-            "name": "LineageOS/%s" % repo_name,
+            "name": "%s/%s" % (repo_name_prefix, repo_name),
             "revision": repo_revision })
         lm.append(project)
 
