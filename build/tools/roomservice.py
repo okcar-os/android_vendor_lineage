@@ -204,6 +204,7 @@ def add_to_manifest(repositories):
         lm = ElementTree.Element("manifest")
 
     for repository in repositories:
+        repo_remote = 'github'
         repo_name = repository['repository']
         repo_target = repository['target_path']
         repo_revision = repository['branch']
@@ -212,6 +213,7 @@ def add_to_manifest(repositories):
         if repo_name in okcaros_repos:
             repo_name_prefix = "okcar-os"
             repo_revision = okcaros_revision
+            repo_remote = 'okcar-os'
         else:
             repo_name_prefix = "LineageOS"
             
@@ -222,7 +224,7 @@ def add_to_manifest(repositories):
         print('Adding dependency: %s/%s -> %s' % (repo_name_prefix, repo_name, repo_target))
         project = ElementTree.Element("project", attrib = {
             "path": repo_target,
-            "remote": "github",
+            "remote": repo_remote,
             "name": "%s/%s" % (repo_name_prefix, repo_name),
             "revision": repo_revision })
         lm.append(project)
