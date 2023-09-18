@@ -23,6 +23,7 @@ import netrc
 import os
 import re
 import sys
+import subprocess
 try:
   # For python3
   import urllib.error
@@ -306,6 +307,16 @@ def get_default_or_fallback_revision(repo_name):
         print(branch)
     print("Use the ROOMSERVICE_BRANCHES environment variable to specify a list of fallback branches.")
     sys.exit()
+
+def download_and_verify_okcar_apps():
+    # Get the directory of the current script
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    aosp_dir = os.path.realpath(os.path.join(script_dir, '../../../../'))
+    result = subprocess.run(["python", aosp_dir + '/okcar/apps/AppImport/apps/app_sync.py'])
+    if result.returncode != 0:
+        raise Exception("Failed to download and verify okcar'apps")
+
+download_and_verify_okcar_apps()
 
 if depsonly:
     repo_path = get_from_manifest(device)
