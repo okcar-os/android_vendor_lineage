@@ -15,4 +15,3 @@ PRODUCT_PRODUCT_PROPERTIES += \
 
 $(call inherit-product, vendor/lineage/config/telephony.mk)
 
-$(call inherit-product, $(TOP)/okcar/okcar.mk)
