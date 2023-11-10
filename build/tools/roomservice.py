@@ -286,7 +286,11 @@ def get_default_or_fallback_revision(repo_name):
     print("Default revision: %s" % default_revision)
     print("Checking branch info")
 
-    githubreq = urllib.request.Request("https://api.github.com/repos/LineageOS/" + repo_name + "/branches")
+    if repo_name in okcaros_repos:
+        return okcaros_revision    
+    else:
+        githubreq = urllib.request.Request("https://api.github.com/repos/LineageOS/" + repo_name + "/branches")
+
     add_auth(githubreq)
     result = json.loads(urllib.request.urlopen(githubreq).read().decode())
     if has_branch(result, default_revision):
@@ -316,7 +320,7 @@ def download_and_verify_okcar_apps():
     if result.returncode != 0:
         raise Exception("Failed to download and verify okcar'apps")
 
-download_and_verify_okcar_apps()
+#download_and_verify_okcar_apps()
 
 if depsonly:
     repo_path = get_from_manifest(device)
@@ -328,7 +332,8 @@ if depsonly:
     sys.exit()
 
 else:
-    for repo_name in repositories:
+    all_repos = okcaros_repos + repositories    
+    for repo_name in all_repos:
         if re.match(r"^android_device_[^_]*_" + device + "$", repo_name):
             print("Found repository: %s" % repo_name)
             
