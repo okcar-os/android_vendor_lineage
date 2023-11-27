@@ -320,7 +320,7 @@ def download_and_verify_okcar_apps():
     if result.returncode != 0:
         raise Exception("Failed to download and verify okcar'apps")
 
-#download_and_verify_okcar_apps()
+download_and_verify_okcar_apps()
 
 if depsonly:
     repo_path = get_from_manifest(device)
